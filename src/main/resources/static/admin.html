@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Trị - Đăng Tải Phim Mới</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        body { background-color: #0a0908; color: #f5f2eb; padding: 40px 20px; }
+        .admin-card {
+            max-width: 650px;
+            margin: 0 auto;
+            background: #1f1b17;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.15);
+        }
+        h2 { color: #d4af37; text-align: center; margin-bottom: 25px; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-size: 13px; color: #a9a297; margin-bottom: 6px; }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 6px;
+            color: #fff;
+            outline: none;
+            font-size: 14px;
+        }
+        .form-row { display: flex; gap: 15px; }
+        .form-row .form-group { flex: 1; }
+        button {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%);
+            border: none;
+            border-radius: 25px;
+            color: #000;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .back-link { display: block; text-align: center; margin-top: 15px; color: #a9a297; text-decoration: none; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <div class="admin-card">
+        <h2><i class="fas fa-dharmachakra"></i> Thêm Phim Mới</h2>
+        <form id="uploadForm">
+            <div class="form-group">
+                <label>Tên Bộ Phim</label>
+                <input type="text" id="title" required placeholder="VD: Cuộc Đời Đức Phật Thích Ca">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Chuyên Mục</label>
+                    <select id="category">
+                        <option value="classic">Phim Phật Giáo Kinh Điển</option>
+                        <option value="animation">Hoạt Hình & Tích Truyện</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Thể Loại (Tag)</label>
+                    <input type="text" id="tag" placeholder="VD: Sử Thi, Thiền Tông">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Số Tập</label>
+                    <input type="text" id="episodes" placeholder="VD: Tập 1 - 55">
+                </div>
+                <div class="form-group">
+                    <label>Xuất Xứ</label>
+                    <input type="text" id="year" placeholder="VD: Ấn Độ">
+                </div>
+                <div class="form-group">
+                    <label>Đánh Giá</label>
+                    <input type="text" id="rate" value="9.8">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Link Ảnh Bìa (Poster URL)</label>
+                <input type="url" id="img" required placeholder="https://images.unsplash.com/...">
+            </div>
+            <div class="form-group">
+                <label>Link Nhúng Video (YouTube Embed)</label>
+                <input type="url" id="videoUrl" required placeholder="https://www.youtube.com/embed/n4q06RkS6E8">
+            </div>
+            <div class="form-group">
+                <label>Tóm Tắt Nội Dung</label>
+                <textarea id="desc" rows="3" placeholder="Mô tả tóm tắt..."></textarea>
+            </div>
+            <button type="submit"><i class="fas fa-cloud-upload-alt"></i> Đăng Phim Ngay</button>
+            <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Quay lại trang chủ</a>
+        </form>
+    </div>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const category = document.getElementById('category').value;
+            const payload = {
+                title: document.getElementById('title').value,
+                tag: document.getElementById('tag').value || 'Phật Giáo',
+                episodes: document.getElementById('episodes').value || 'Trọn Bộ',
+                year: document.getElementById('year').value || 'Thuyết Minh',
+                rate: document.getElementById('rate').value || '9.8',
+                img: document.getElementById('img').value,
+                videoUrl: document.getElementById('videoUrl').value,
+                desc: document.getElementById('desc').value
+            };
+            try {
+                const res = await fetch(`/api/movies/upload?category=${category}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    alert('Đăng tải phim thành công!');
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Đăng tải thất bại. Vui lòng kiểm tra server!');
+                }
+            } catch (err) {
+                alert('Không thể kết nối đến Backend!');
+            }
+        });
+    </script>
+</body>
+</html>
